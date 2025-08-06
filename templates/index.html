@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI First-Aid Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI First-Aid Assistant</h1>
+            <p class="tagline">Quick, reliable first-aid guidance when you need it most.</p>
+        </header>
+
+        <main>
+            <!-- Tab Navigation -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="upload">Upload Image</button>
+                <button class="tab-btn" data-tab="describe">Describe Injury</button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Upload Image Tab -->
+                <div id="upload" class="tab-pane active">
+                    <form id="upload-form" class="input-form">
+                        <div class="file-input-container">
+                            <input type="file" id="injury-image" accept="image/*" required>
+                            <label for="injury-image">Choose an image</label>
+                        </div>
+                        <button type="submit" class="primary-btn">Get First-Aid</button>
+                    </form>
+                </div>
+
+                <!-- Describe Injury Tab -->
+                <div id="describe" class="tab-pane">
+                    <form id="describe-form" class="input-form">
+                        <textarea 
+                            id="injury-description" 
+                            placeholder="Please describe the injury or situation in detail..."
+                            required
+                        ></textarea>
+                        <button type="submit" class="primary-btn">Get First-Aid</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results Section (Initially Hidden) -->
+            <div id="results" class="results-container hidden">
+                <!-- Emergency Alert Box -->
+                <div id="emergency-alert" class="emergency-alert hidden">
+                    <h3>⚠️ EMERGENCY - SEEK IMMEDIATE MEDICAL ATTENTION</h3>
+                    <p id="emergency-message"></p>
+                    <div class="emergency-numbers">
+                        <p><strong>Emergency Numbers:</strong></p>
+                        <p>📞 Emergency Services: 108</p>
+                    </div>
+                </div>
+
+                <!-- First Aid Results -->
+                <div class="results-content">
+                    <div class="injury-identification">
+                        <h3>Identified Injury/Condition</h3>
+                        <p id="injury-type"></p>
+                    </div>
+
+                    <div class="first-aid-steps">
+                        <h3>First Aid Steps</h3>
+                        <ol id="steps-list"></ol>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="disclaimer">
+                <p><strong>Important Disclaimer:</strong></p>
+                <p>This AI First-Aid Assistant is designed to provide general first-aid guidance only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of qualified medical professionals for serious injuries or medical conditions. In case of emergency, immediately call your local emergency services.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

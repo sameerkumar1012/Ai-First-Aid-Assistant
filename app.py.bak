@@ -1,0 +1,81 @@
+from flask import Flask, render_template, request, jsonify
+import google.generativeai as genai
+from dotenv import load_dotenv
+import base64
+import os
+import json
+
+# Load environment variables
+print("Loading environment variables...")
+load_dotenv()
+
+# Initialize Flask app
+print("Initializing Flask app...")
+app = Flask(__name__)
+
+# Make the app variable accessible to Flask CLI
+application = app
+
+# Print API key status (safely)
+api_key = os.getenv('GOOGLE_API_KEY')
+if api_key:
+    print("API key found")
+else:
+    print("WARNING: No API key found in environment variables")
+
+# Configure Google AI
+try:
+    print("Configuring Google AI...")
+    genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
+    
+    print("Initializing Gemini models...")
+    # Model for text inputs
+    text_model = genai.GenerativeModel('gemini-pro')
+    # Model for image inputs
+    vision_model = genai.GenerativeModel('gemini-pro-vision')
+    print("Models initialized successfully")
+except Exception as e:
+    print(f"Error initializing Gemini AI: {str(e)}")
+    raise
+
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+@app.route('/ask', methods=['POST'])
+def ask():
+    try:
+        if request.files.get('image'):
+            # Handle image input
+            print("Receiving image...")
+            image = request.files['image']
+            print(f"Image received: {image.filename}, Content-Type: {image.content_type}")
+            
+            image_data = image.read()
+            print(f"Image data read, size: {len(image_data)} bytes")
+            
+            image_prompt = """
+            Analyze this image of an injury and provide a JSON response with the following fields:
+            - 'injury_name': A clear, specific name for the injury shown
+            - 'first_aid_steps': A list of detailed first aid steps to treat this injury
+            - 'severity': Either 'minor', 'moderate', or 'severe' based on the injury shown
+
+            If it's a severe injury that requires immediate medical attention, include that as the first step.
+            """
+            
+            # Create prompt parts with image
+            prompt_parts = [
+                image_prompt,
+                {"mime_type": image.content_type, "data": base64.b64encode(image_data).decode()}
+            ]
+            
+            print("Calling Gemini Vision API...")
+            # Generate response using vision model
+            response = vision_model.generate_content(prompt_parts)
+            print("Received response from Gemini Vision API")
+
+if __name__ == '__main__':
+    print("\nStarting Flask server...")
+    print("You can access the application at: http://localhost:5001")
+    print("Press CTRL+C to stop the server")
+    app.run(debug=True, host='0.0.0.0', port=5001)
